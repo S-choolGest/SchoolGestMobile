@@ -115,7 +115,7 @@ public class Absence {
     public void setDate(long date) {
       
        this.date = new Date(date * 1000);
-        System.out.println(this.date);
+       
     }
 
     public Date getHeure() {
@@ -123,17 +123,18 @@ public class Absence {
     }
     
     public String getHeureString(Date heure) {
-        
-       Date date = new Date( heure.getTime() *10000);
-       SimpleDateFormat df2 = new SimpleDateFormat("hh:mm:ss");
-        String dateText = df2.format(date);
+       System.out.println("HeureEntitéAbs= "+heure);
+       
+       /*Date date = new Date( heure.getTime() *1000);
+       SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");*/
+        String dateText = heure.toString().substring(11,19);//df2.format(date);
         return dateText;
     }
 
     public void setHeure(String heure) {
         try {
             this.heure = new SimpleDateFormat("hh:mm:ss").parse(heure);
-            System.out.println(this.heure);
+             
         } catch (ParseException ex) {
             System.out.println(ex);
         }

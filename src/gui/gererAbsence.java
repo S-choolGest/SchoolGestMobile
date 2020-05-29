@@ -87,7 +87,7 @@ getToolbar().addCommandToRightBar("", searchIcon, (e) -> {
         
        
        
-                for (Absence  r : new AbsenceService().getAllAbsence ())
+                for (Absence  r : new AbsenceService().getAllAbsenceProf())
                 {
                     this.add(addItem(r, ListClasse, ListEtudiant, ListMatiere));
                 }
@@ -186,7 +186,7 @@ getToolbar().addCommandToRightBar("", searchIcon, (e) -> {
         
         cn1.setLeadComponent(btn);
           
-          System.out.println(cn1.getComponentAt(0).getClientProperty("Etu"));
+        
           
         return cn1;
                 

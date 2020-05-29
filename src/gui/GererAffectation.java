@@ -42,7 +42,7 @@ public class GererAffectation extends Form {
   Professeur idProf ;
   Classe idClasse ;
     
- private static final String HTML_API_KEY = "*********************************";
+
     
     public GererAffectation(Form previous, Resources theme){
         

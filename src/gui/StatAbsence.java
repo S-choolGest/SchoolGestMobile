@@ -30,6 +30,8 @@ import com.google.common.collect.Multimap;
 import com.mycompany.myapp.MyApplication;
 import entities.Utilisateur;
 
+
+
 /**
  *
  * @author MehdiS
@@ -39,11 +41,12 @@ public class StatAbsence extends Form {
   
     
       Multimap<String,String> ListHeureDate = ArrayListMultimap.create();
-
+String PreviousVal = " ";
         
     Map<String,Integer> ListHeureValue = new HashMap<>();
     ComboBox<String> cbHeure;
-    int i = 0;
+    int i = 1;
+    int k = 0;
     StatAbsence(Form previous) {
          this.getToolbar().addCommandToLeftBar("back", MyApplication.theme.getImage("back-command.png"), ev->{
  
@@ -67,21 +70,27 @@ public class StatAbsence extends Form {
            ListHeureDate.put(dayOfWeek,r.getHeureString(r.getHeure()));
            
         }
-        System.out.println(ListHeureDate);
+        System.out.println("ListeHeureDate= "+ListHeureDate);
         cbHeure.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
+                ListHeureValue.clear();
                 for(Map.Entry<String,String> a: ListHeureDate.entries()){
-                    System.out.println(a.getKey());
-            if(ListHeureDate.containsKey(cbHeure.getSelectedItem())){
-                
-                ListHeureValue.put(a.getValue(),i++);
-               
+                  
+            if(a.getKey().equals(cbHeure.getSelectedItem())){
+                if(ListHeureValue.containsKey(a.getValue())){
+               ListHeureValue.put(a.getValue(),ListHeureValue.get(a.getValue())+1);
+                }else{
+                   ListHeureValue.put(a.getValue(),i); 
+                }
+                k++;
+                System.out.println("listeHeureValue= "+ ListHeureValue);
+                 PreviousVal = a.getValue();
             }
         }
             
-        System.out.println(ListHeureValue);
+       
        // double[] values = new double[]{12, 14, 11, 10, 19};
 
   
@@ -100,14 +109,15 @@ public class StatAbsence extends Form {
     r.setHighlighted(true);
 
     // Create the chart ... pass the values and renderer to the chart object.
-    PieChart chart = new PieChart(buildCategoryDataset("Project budget", ListHeureValue), renderer);
-
+    PieChart chart = new PieChart(buildCategoryDataset("Statistique Absences", ListHeureValue), renderer);
+                System.out.println(chart);
     // Wrap the chart in a Component so we can add it to a form
     ChartComponent c = new ChartComponent(chart);
 
     // Create a form and show it.
-   
+                System.out.println(c);
     add(c);
+               
     }
         });
         add(cbHeure);
@@ -140,15 +150,15 @@ private DefaultRenderer buildCategoryRenderer(int[] colors) {
  */
 protected CategorySeries buildCategoryDataset(String title, Map<String,Integer> map) {
     CategorySeries series = new CategorySeries(title);
-    series.clear();
-    int k = 0;
     System.out.println("map = " + map);
+    System.out.println(k);
     for(Map.Entry<String,Integer> a: map.entrySet()){
-        
-        i=0;
-        series.add(a.getKey(), a.getValue());
+        double valueT = (double)(a.getValue()*100)/k;
+       
+       
+        series.add(a.getKey(), valueT);
     }
-
+    System.out.println(series.getValue(0));
     return series;
 }
 

@@ -50,9 +50,7 @@ public class AbsenceService {
             tasks=new ArrayList<>();
             JSONParser j = new JSONParser();
             Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            System.out.println("size :"+list.size());
             for(Map<String,Object> obj : list){
                 Absence t = new Absence();
                 float id = Float.parseFloat(obj.get("id").toString());
@@ -62,7 +60,6 @@ public class AbsenceService {
                 Map<String, Object> date = (Map<String, Object>) obj.get("date");
                 String heure = obj.get("heureFormat").toString();
                 Map<String, Object> InfoEtudiant = (Map<String, Object>) idEtudiant.get("id");
-                System.out.println(idEtudiant);
                 t.setId((int)id);
                 Matiere m = new Matiere((Double) matiere.get("idMatiere"),matiere.get("nomMatiere").toString());
                 t.setMatiere(m);
@@ -93,7 +90,7 @@ public class AbsenceService {
             Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
             
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            System.out.println("size :"+list.size());
+          
             for(Map<String,Object> obj : list){
                 Absence t = new Absence();
                 float id = Float.parseFloat(obj.get("id").toString());
@@ -129,14 +126,14 @@ public class AbsenceService {
     }
     public Absence getAbsence(int id){
         String url ="http://localhost//SchoolGest/web/app_dev.php/school/AbsenceApi/"+id;
-        System.out.println(url);
+       
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             public void actionPerformed(NetworkEvent evt) {
                
                // ti = parseAbsence1(new String(req.getResponseData()));
-                 //System.out.println("chnia mochkol "+tasks);
+                
                 req.removeResponseListener(this);
             }
         });
@@ -171,7 +168,7 @@ public class AbsenceService {
          
      public ArrayList<Absence> suppAbsence(int id){
         String url ="http://localhost/SchoolGest/web/app_dev.php/school/supprimerAbs?id="+id;
-       System.out.println(url);
+      
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -184,7 +181,7 @@ public class AbsenceService {
                 } catch (Exception ex) {
                 
                 }
-                    //System.out.println("chnia mochkol "+tasks);
+                   
                     req.removeResponseListener(this);
               
             }
@@ -196,7 +193,7 @@ public class AbsenceService {
   public boolean modifierAbsence(Absence t) {
             String url ="http://localhost/SchoolGest/web/app_dev.php/school/modifierAbs?matiere="+t.getMatiere().getId()+"&date="+t.getDateString(t.getDate())+
                 "&heure="+t.getHeure()+"&classe="+t.getClasse().getId()+"&etat="+t.getetat()+"&etudiant="+t.getIdEtudiant().getId()+"&id="+t.getId();
-            System.out.println(url);
+          
         req.setUrl(url);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -211,9 +208,9 @@ public class AbsenceService {
      
   
   
-        public ArrayList<Absence> getAllAbsence(){
+        public ArrayList<Absence> getAllAbsenceProf(){
         String url ="http://localhost/SchoolGest/web/app_dev.php/school/afficherProfAbs/"+Utilisateur.current_user.getId();
-       System.out.println(url);
+      
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -229,7 +226,28 @@ public class AbsenceService {
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
-            System.out.println(tasks);
+          
+        return tasks;
+    }
+        public ArrayList<Absence> getAllAbsence(){
+        String url ="http://localhost/SchoolGest/web/app_dev.php/school/afficherAbs";
+       
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+             
+                try {
+                    tasks = parseAbsence(new String(req.getResponseData()));
+                    req.removeResponseListener(this);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+           
         return tasks;
     }
         public ArrayList<Matiere> parseMatieres(String jsonText)throws Exception{
@@ -239,7 +257,7 @@ public class AbsenceService {
             Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
             
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            System.out.print("size :"+list.size());
+            
             for(Map<String,Object> obj : list){
                 Matiere M = new Matiere();
                float id = Float.parseFloat(obj.get("idMatiere").toString());
@@ -260,12 +278,13 @@ public class AbsenceService {
             Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
             
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            System.out.print("size :"+list.size());
+     
+           
             for(Map<String,Object> obj : list){
                 Etudiant E = new Etudiant();
                 Map<String, Object> id = (Map<String, Object>) obj.get("id");
                //String nom = obj.get("nomMatiere").toString();
-                  System.out.println("id = " + id.get("id") + "nom = "+ id.get("nom"));
+                  
                 E.setId((int)Float.parseFloat(id.get("id").toString()));
                 E.setNom(id.get("nom").toString());
                
@@ -283,7 +302,7 @@ public class AbsenceService {
             JSONParser j = new JSONParser();
             Map<String,Object> tasksListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
             List<Map<String,Object>> list = (List<Map<String,Object>>)tasksListJson.get("root");
-            System.out.print("size :"+list.size());
+            
             for(Map<String,Object> obj : list){
               
                 Classe c = new Classe();
@@ -301,7 +320,7 @@ public class AbsenceService {
         }
              public ArrayList<Matiere> getAllMatieres(){
             String url ="http://localhost/SchoolGest/web/app_dev.php/school/Matieres";
-       //System.out.println(url);
+       
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -322,7 +341,7 @@ public class AbsenceService {
     }      
         public ArrayList<Etudiant> getAllEtudiant(String Classe){
             String url ="http://localhost/SchoolGest/web/app_dev.php/school/Etudiants/"+Classe;
-           //System.out.println(url);
+        
             req.setUrl(url);
             req.setPost(false);
             req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -343,7 +362,7 @@ public class AbsenceService {
         }      
         public ArrayList<Classe> getAllClasse(int id ){
             String url ="http://localhost/SchoolGest/web/app_dev.php/school/Classes/"+id;
-           System.out.println(url);
+          
             req.setUrl(url);
             req.setPost(false);
             req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -366,7 +385,7 @@ public class AbsenceService {
 
     public ArrayList<Absence> getAllAbsenceEtudiant(int id) {
          String url ="http://localhost/SchoolGest/web/app_dev.php/school/EtudAbsaff/"+id;
-       System.out.println(url);
+      
         req.setUrl(url);
         req.setPost(false);
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -382,7 +401,7 @@ public class AbsenceService {
             }
         });
         NetworkManager.getInstance().addToQueueAndWait(req);
-            System.out.println(tasks);
+            
         return tasks;
     }
 }
