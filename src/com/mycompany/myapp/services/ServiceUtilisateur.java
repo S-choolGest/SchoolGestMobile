@@ -3,18 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.mycompany.myapp.services;
 
+import Entite.Utilisateur.Utilisateur;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.ui.events.ActionListener;
-import com.mycompany.myapp.entities.Encadrement;
-import entities.Utilisateur;
-import static com.mycompany.myapp.services.ServiceEncadrement.instance;
 import com.mycompany.myapp.utils.Statics;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,54 +20,70 @@ import java.util.Map;
 
 /**
  *
- * @author TOSHIBA
+ * @author william
  */
 public class ServiceUtilisateur {
-    public ArrayList<Utilisateur> utilisateur;
-    public static ServiceUtilisateur instance=null;
-    public boolean resultOK;
-    private ConnectionRequest req;
-    private ServiceUtilisateur() {
-         req = new ConnectionRequest();
-    }
-    public static ServiceUtilisateur getInstance() {
-        if (instance == null) {
-            instance = new ServiceUtilisateur();
-        }
-        return instance;
-    }
-     public ArrayList<Utilisateur> parseUtilisateurs(String jsonText){
-        try {
-            utilisateur=new ArrayList<>();
-            JSONParser j = new JSONParser();
-            Map<String,Object> utilisateursListJson = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
-            List<Map<String,Object>> list = (List<Map<String,Object>>)utilisateursListJson.get("root");
-            for(Map<String,Object> obj : list){
-                Utilisateur p = new Utilisateur();
-                float id = Float.parseFloat(obj.get("id").toString());
-                p.setId((int)id);
-                p.setUsername(obj.get("username").toString());
-             //   p.setRole(obj.get("role").toString());
 
-                utilisateur.add(p);
-            }
-        } catch (IOException ex) {
-        }
-        return utilisateur;
-    }
-    public ArrayList<Utilisateur> getUser(String username){
-        /*http://localhost/pitest/web/app_dev.php/mobile/user/etud*/
-        String url = Statics.BASE_URL +"user/"+username;
-        req.setUrl(url);
-        req.setPost(false);
-        req.addResponseListener(new ActionListener<NetworkEvent>() {
-            @Override
-            public void actionPerformed(NetworkEvent evt) {
-                utilisateur = parseUtilisateurs(new String(req.getResponseData()));
-                req.removeResponseListener(this);
-            }
-        });
-        NetworkManager.getInstance().addToQueueAndWait(req);
-        return utilisateur;
-    }
+	public boolean resultOK;
+	public Utilisateur user = new Utilisateur();
+
+	public Utilisateur getUser(String jsonText) throws IOException {
+		JSONParser j = new JSONParser();
+		Map<String, Object> u = j.parseJSON(new CharArrayReader(jsonText.toCharArray()));
+		Utilisateur user = new Utilisateur();
+		float id = Float.parseFloat(u.get("id").toString());
+		user.setId((int)id);
+		user.setUsername(u.get("username").toString());
+		user.setNom(u.get("nom").toString());
+		user.setPrenom(u.get("prenom").toString());
+		user.setEmail(u.get("email").toString());
+		float cin = Float.parseFloat(u.get("cin").toString());
+		user.setCin((int)cin);
+		float numTel = Float.parseFloat(u.get("numTel").toString());
+		user.setNumTel((int)numTel);
+		user.setDateNaissance(u.get("dateNaissance").toString());
+		user.setAdresse(u.get("adresse").toString());
+		user.setRole(u.get("role").toString());
+		user.setProfil(u.get("profil").toString());
+		return user;
+	}
+
+	public Utilisateur connecter(Utilisateur u) {
+		String url = Statics.BASE_URL + "/mobile/login/" + u.getUsername() + "/" + u.getPassword();
+		ConnectionRequest req = new ConnectionRequest(url);
+		req.addResponseListener(new ActionListener<NetworkEvent>() {
+			@Override
+			public void actionPerformed(NetworkEvent evt) {
+				resultOK = req.getResponseCode() == 200;
+				if (resultOK) {
+					try {
+						user = getUser(new String(req.getResponseData()));
+					} catch (IOException ex) {
+						System.out.println(ex);
+					}
+				}
+			}
+		});
+		NetworkManager.getInstance().addToQueueAndWait(req);
+		return user;
+	}
+	
+	public Utilisateur parseUser(Map<String, Object> u){
+		Utilisateur user = new Utilisateur();
+		float id = Float.parseFloat(u.get("id").toString());
+		user.setId((int)id);
+		user.setUsername(u.get("username").toString());
+		user.setNom(u.get("nom").toString());
+		user.setPrenom(u.get("prenom").toString());
+		user.setEmail(u.get("email").toString());
+		float cin = Float.parseFloat(u.get("cin").toString());
+		user.setCin((int)cin);
+		float numTel = Float.parseFloat(u.get("numTel").toString());
+		user.setNumTel((int)numTel);
+		user.setDateNaissance(u.get("datenaissance").toString());
+		user.setAdresse(u.get("adresse").toString());
+		user.setRole(u.get("roles").toString());
+		user.setProfil(u.get("profile").toString());
+		return user;
+	}
 }
